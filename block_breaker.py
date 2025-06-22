@@ -53,6 +53,7 @@ for row in range(5):
 # ゲームの状態
 game_over = False
 score = 0
+level = 1
 font = pygame.font.Font(None, 36)
 
 def draw_paddle():
@@ -73,7 +74,9 @@ def show_game_over():
 
 def show_score():
     score_text = font.render(f"Score: {score}", True, BLACK)
+    level_text = font.render(f"Level: {level}", True, BLACK)
     screen.blit(score_text, (10, 10))
+    screen.blit(level_text, (10, 50))
 
 # ゲームループ
 clock = pygame.time.Clock()
@@ -92,6 +95,7 @@ while running:
                 paddle_x = (WIDTH - paddle_width) // 2
                 game_over = False
                 score = 0
+                level = 1
                 for block in blocks:
                     block['visible'] = True
     
@@ -133,6 +137,22 @@ while running:
                 block['visible'] = False
                 ball_dy *= -1
                 score += 10
+                
+                # すべてのブロックが消えたかチェック
+                all_blocks_gone = all(not block['visible'] for block in blocks)
+                if all_blocks_gone:
+                    level += 1
+                    # ボールの速度を上げる
+                    ball_dx *= 1.2
+                    ball_dy *= 1.2
+                    # ブロックをリセット
+                    for block in blocks:
+                        block['visible'] = True
+                    # ボールとパドルをリセット
+                    ball_x, ball_y = WIDTH // 2, HEIGHT // 2
+                    ball_dx = 4 * random.choice([-1, 1])
+                    ball_dy = -4
+                    paddle_x = (WIDTH - paddle_width) // 2
                 break
     
     # 描画
